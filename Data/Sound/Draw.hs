@@ -34,9 +34,9 @@ defaultConfig = RC
  { rcwidth     = 800
  , rcheight    = 300
  , rcsteps     =   2
- , signalColor = RGBA 255   0   0 1
- , bgColor     = RGBA   0   0   0 1
- , axisColor   = RGBA 100 100 100 1
+ , signalColor = RGBA 0   1   0   0.8
+ , bgColor     = RGBA 0   0   0   1
+ , axisColor   = RGBA 0.5 0.5 0.5 1
  , leftFactor  = recip (2^(4 :: Int))
  }
 
@@ -71,13 +71,14 @@ renderSoundChannel rc s ch = do
   setColor $ signalColor rc
   let sw :: Word32
       sw = floor $ w * (1 - leftFactor rc)
-  move p lw h2
-  mapM_ (\i -> let x :: Word32
-                   x = div (i * nSamples s) sw
-                   y :: Double
-                   y = atSample x s !! (ch-1)
-               in  line p (lw + fromIntegral i) (h2*(1-y))
-                ) [1 , 1 + fromIntegral (rcsteps rc) .. sw]
+  let (x:xs) = fmap (\i -> let a :: Word32
+                               a = div (i * nSamples s) sw
+                               b :: Double
+                               b = atSample a s !! (ch-1)
+                           in  (lw + fromIntegral i , h2*(1-b))
+                        ) [1 , 1 + fromIntegral (rcsteps rc) .. sw]
+  move p (fst x) (snd x)
+  mapM_ (uncurry $ line p) xs
   stroke
 
 renderSoundWith :: RenderConfig -> Sound -> Render ()

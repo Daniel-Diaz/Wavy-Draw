@@ -16,8 +16,7 @@ Extra-source-files:
   -- README.md
   -- Examples
   examples/sine.hs
-  -- examples/karplus.hs
-  -- examples/square.hs
+  examples/sine2.hs
 
 Source-repository head
   type: git
