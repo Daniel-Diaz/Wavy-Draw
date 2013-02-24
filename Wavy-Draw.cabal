@@ -1,0 +1,32 @@
+Name: Wavy-Draw
+Version: 0.1
+Author: Daniel Díaz
+Category: Sound
+Build-type: Simple
+License: BSD3
+License-file: license
+Maintainer: Daniel Díaz (dhelta `dot` diaz `at` gmail `dot` com)
+Stability: Experimental
+Bug-reports: dhelta `dot` diaz `at` gmail `dot` com
+Synopsis: Wavy sounds drawer.
+Description: Sounds for your eyes!
+Cabal-version: >= 1.8
+Tested-with: GHC == 7.4.2
+Extra-source-files:
+  -- README.md
+  -- Examples
+  examples/sine.hs
+  -- examples/karplus.hs
+  -- examples/square.hs
+
+Source-repository head
+  type: git
+  location: git://github.com/Daniel-Diaz/Wavy-Draw.git
+
+Library
+  Build-depends: base ==4.*
+               , Wavy
+               , cairo
+  Exposed-modules:
+    Data.Sound.Draw
+  GHC-Options: -Wall -O2
