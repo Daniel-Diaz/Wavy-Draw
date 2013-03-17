@@ -24,6 +24,7 @@ data RenderConfig = RC
  , rcheight    :: Int
  , rcsteps     :: Int
  , signalColor :: RGBA
+ , signalWidth :: Double
  , bgColor     :: RGBA
  , axisColor   :: RGBA
  , leftFactor  :: Double
@@ -35,6 +36,7 @@ defaultConfig = RC
  , rcheight    = 300
  , rcsteps     =   2
  , signalColor = RGBA 0   1   0   0.8
+ , signalWidth = 1
  , bgColor     = RGBA 0   0   0   1
  , axisColor   = RGBA 0.5 0.5 0.5 1
  , leftFactor  = recip (2^(4 :: Int))
@@ -59,6 +61,8 @@ renderSoundChannel rc s ch = do
       lw = leftFactor rc * w
   ---- Axis
   setColor $ axisColor rc
+  setLineWidth 1
+  setLineJoin LineJoinMiter
   -- Vertical axis
   move p lw 0
   line p lw h
@@ -69,6 +73,8 @@ renderSoundChannel rc s ch = do
   stroke
   ---- Signal
   setColor $ signalColor rc
+  setLineWidth $ signalWidth rc
+  setLineJoin LineJoinRound
   let sw :: Word32
       sw = floor $ w * (1 - leftFactor rc)
   let (x:xs) = fmap (\i -> let a :: Word32
@@ -94,8 +100,9 @@ renderSound = renderSoundWith defaultConfig
 
 renderFileSoundWith :: RenderConfig -> FilePath -> Sound -> IO ()
 renderFileSoundWith rc fp s =
-  withImageSurface FormatARGB32 (rcwidth rc) (rcheight rc) $
-    \sf -> renderWith sf (renderSoundWith rc s) >> surfaceWriteToPNG sf fp
+  -- withImageSurface FormatARGB32 (rcwidth rc) (rcheight rc) $
+  withPDFSurface fp (fromIntegral $ rcwidth rc) (fromIntegral $ rcheight rc) $
+    \sf -> renderWith sf (renderSoundWith rc s) -- >> surfaceWriteToPNG sf fp
 
 renderFileSound :: FilePath -> Sound -> IO ()
 renderFileSound = renderFileSoundWith defaultConfig
